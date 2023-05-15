@@ -1,0 +1,320 @@
+openapi: 3.0.0
+info:
+  title: LDUN Integrations APIs - New
+  version: 1.0.0
+servers:
+  - url: https://ldun.com.sa
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    bearerAuth:
+      type: http
+      scheme: bearer
+tags:
+  - name: Introduction
+    description: >-
+      Welcome to the API Documentation for LDUN. This documentation serves as a comprehensive guide for developers looking to integrate and leverage the functionality provided by our API. By following this documentation, developers can quickly understand how to make successful API calls, retrieve relevant data, and incorporate it into their applications. This API allows clients to communicate LDUN to get, create orders.
+
+
+      LDUN APIs Integration is a powerful and versatile APIs designed to provide an alternative payment method for websites to use. Our APIs enable seamless integration and empower developers to harness the full potential of The pay with LDUN feature.
+
+
+      This will include the following: - Intermediate Page - Back-to-Back
+
+  - name: Intermediate Page
+    description: >-    
+      This is section is intended to showcase the features and functionalities of the newly created **Intermediate** **Page** for LDUN APIs It is the main pillar in the LDUN business dogma.
+
+
+      This page will be inserted into suppliers' websites so that merchants can go in and purchase goods and checkout out using LDUN as a payment option
+      
+      # Getting Started
+
+      Learn how to embed a the **Pay with LDUN** option into your website so that Merchants, ortherwise users can use this feature.
+      
+      ##  Who is this for?
+      
+      This document is aimed for websites that provide wholesales comodities that can be purchased with a payment gateway.  
+
+      Or **Suppliers** for short.
+      
+      ##  Before we begin
+
+      Make sure your website is up and running and that you can a add a Javascript file to the checkout page.
+      
+      ##  How it works
+
+      The process of setting up an Intermediate page is quite simple as shown in the diagram below,
+
+      <img src="https://content.pstmn.io/a5278913-dbd7-4ca3-81fa-05c75ecb06b3/Rmxvdy5wbmc=" width="618" height="244">
+
+
+      Details are in the next section
+      
+      # Setup Your Project
+
+      Before we begin this step make sure to contact LDUN and ask for an intermediate page to be setup on your website.
+
+      ## LDUN site
+
+      LDUN admin will require the following details,
+
+        1. Order status webhook URL
+        2. Marketplace order details URL
+        3. Order Confirmation redirect URL
+        4. Marketplace Log
+          
+
+      LDUN admin will provide a Client ID and a Javascript link for the supplier
+
+
+      Trivia on the required details,
+
+      - **Order status webhook URL**
+          - This is an endpoint that we post to in order to show the order status, anytime that the order status changes we will notify the supplier with this change i.e. LDUN admin changes an order from Pending to approved. Statuses are
+              - `{ "Status": "Approved_Order", "OrderId": "1948" }`
+              - `{ "Status": "Fully_Paid", "OrderId": "1948" }`
+              - `{ "Status": "Expired", "OrderId": "1948" }`
+      - **Marketplace order details URL**
+          - This is an endpoint that we will use to get the order details, this will include the total cost and order items we will then use these details to show the merchant the total cost and show the installment plan on the intermediate page
+      - **Order Confirmation redirect URL**
+          - This URL is used to redirect the merchant. After submitting the order merchant will still be on the intermediate page so this is a link that will be present in order to redirect him back to the supplier’s website
+      - **Marketplace Logo**
+          - Marketplace logo that is displayed in the intermediate page, merchant will see this logo while he is submitting his order. It will serve as a confirmation as to which site he is using.
+
+      
+      ##  Suppliers' site
+
+      The JavaScript link has two functions,
+
+        - The enablement of the pay with LDUN button
+        - The access of the intermediate page itself
+          
+
+      You will have to inject this link to allow this whole process to take place
+
+      [https://mp.ldun.com.sa/integrationsapi/js/helper.js](https://mp.ldun.com.sa/integrationsapi/js/helper.js)
+
+
+      From the above link the below should be called
+
+        ``` javascript
+        function Intialize(clientId, orderAmount, areaId, orderId, locale = 'en')
+
+        ```
+
+      For reference the paramaters mentioned indicate the following,
+
+        - **Order Amount** - Total to be paid  
+        - **Area ID** - Button element ID  
+        - **Order ID** - To get order details from supplier's site  
+        - **Locale** - Is language to display, the default is English  
+
+
+      # User perspective
+
+
+      This section shows how merchants will interact with the Intermediate Page.
+
+      This will include the whole process and how it looks from their perspective, the flow of it will be as follows,
+
+      <img src="https://content.pstmn.io/e6bbec31-3aae-42e7-8c00-938ef27814de/Zmxvd2NoYXJ0LnBuZw==" alt="">
+     
+     
+      ##  New Merchant
+
+
+      First the merchant or the order submitter will go on a supplier site that has LDUN as a payment option. He will then choose the goods that needs to be purchased and select LDUN as a payment to checkout, he will then be directed to the _Intermediate Page._
+
+      User will be greeted by the first page shown below,
+
+        **STEP 1: Order info**
+
+        <img src="https://content.pstmn.io/048695d6-f409-4af0-b02c-9650e8739261/NzMxZGI1ZTQtMTU4My00ZTdmLWJlZjQtMjNlNzZkNTgyYjZmLnBuZw==">
+
+        1 - Supplier name and logo
+
+        2 - Payment term, which is preset. (only one exists for now)
+
+        3 - Cart total
+
+        **STEP 2: Company info**
+
+        <img src="https://content.pstmn.io/d32fead9-0b52-4920-a9e4-9ae6f60219a4/NzMxZGI1ZTQtMTU4My00ZTdmLWJlZjQtMjNlNzZkNTgyYjZmLnBuZw==">
+
+        4 - Commercial Registration number
+
+        5 - Company Name (Auto populates based on the CR number)
+
+        6 - Tax Number
+
+        **STEP 3: Submitter data**
+
+        <img src="https://content.pstmn.io/42d66dcd-28b7-4046-9508-e40b1cd732a4/NzMxZGI1ZTQtMTU4My00ZTdmLWJlZjQtMjNlNzZkNTgyYjZmLnBuZw==">
+
+        Here the submitter will be required to put his mobile number and his email address to receive an OTP verification as shown in the next step.
+
+        **STEP 4: OTP Verification**
+
+        <img src="https://content.pstmn.io/c433891f-d561-4f5e-bf27-1b9ea25e0b92/NzMxZGI1ZTQtMTU4My00ZTdmLWJlZjQtMjNlNzZkNTgyYjZmLnBuZw==">
+
+        Submitter needs to input the OTP to proceed to the confirmation page
+
+        **STEP 5: Confirmation page**
+
+        <img src="https://content.pstmn.io/042d07ac-584c-4565-8128-ebab239d9145/NzMxZGI1ZTQtMTU4My00ZTdmLWJlZjQtMjNlNzZkNTgyYjZmLnBuZw==">
+
+        At this point the merchant account is created, and the order has been submitted and is pending a Manager/Owner’s approval
+
+        Order is created as Pending on the LDUN Portal.
+        
+      ##  Existing Merchant
+
+      The existing merchant scenario will follow the same flow as the new with the advent exception of STEP 3and the addition of a sixth step
+
+      Submitter info will be saved in the LDUN portal if that’s a returning merchant.
+
+      The flow here will be as follows,
+
+        **STEP 1: Order info**
+
+        **STEP 2: Company info**
+
+        **STEP 4: OTP Verification**
+
+        **STEP 5: Confirmation page**
+
+        **STEP 6: Payment instructions**
+
+        <img src="https://content.pstmn.io/bda5026a-8983-4c31-a090-bb7cb7a90a8c/NzMxZGI1ZTQtMTU4My00ZTdmLWJlZjQtMjNlNzZkNTgyYjZmLnBuZw==">
+
+        Here the merchant gets the payment info required to proceed with the order.
+
+
+  - name: API rate limit
+    description: |-
+      **Rate Limit Rules**
+
+      This API has a rate limt of,
+
+      - 3 times per second
+      - 60 times per hour
+      - 1000 per 24 hours
+
+
+  - name: Back-To-Back
+    description: |-
+        This is the second use of the APIs, it acts as a direct integration method allowing users to pay with LDUN without ever having to leave the suppliers' site.
+
+
+        ## B2B Before we begin
+
+        Please contact a LDUN admin asking to set up a Back-To-Back integration, you will be required to provide an Order status webhook URL.
+
+        A LDUN admin will in turn provide you with the following,
+
+        - Client ID
+        - Client Secret Key.
+              
+
+        ---
+
+        Trivia on the required details,
+
+        - **Order status webhook URL**
+            - This is an endpoint that we post to in order to show the order status, anytime that the order status changes we will notify the supplier with this change i.e. LDUN admin changes an order from Pending to approved. Statuses are
+                - `{ "Status": "Approved_Order", "OrderId": "1948" }`
+                - `{ "Status": "Fully_Paid", "OrderId": "1948" }`
+                - `{ "Status": "Expired", "OrderId": "1948" }`
+
+          ## B2B How it works
+
+          **Steps to integrate,**
+
+          1. Use the provided Client ID and a Client Secret Key in the Authorization section to generate a token using the provided endpoint - [ldun.com.sa/identity/connect/token](https://ldun.com.sa/identity/connect/token)
+          2. Call the create order endpoint with the following - [ldun.com.sa/integrationsapi/api/v1/orders/supplier](https://ldun.com.sa/integrationsapi/api/v1/orders/supplier)
+              1. Add the generated token as a Bearer Token.
+              2. In the JSON body consists of:
+                  1. `Merchant Commercial Registration Number`
+                  2. `Merchant Tax Number`
+                  3. `Merchant Mobile Number`
+                  4. `Merchant Email Address`
+                  5. `Third Party Identifier Number`
+                  6. As well the the `product` information, which are,
+                      1. `Quantity`
+                      2. `Amount Per Unit`
+                      3. `Product Name`
+
+          Disclaimer: Please follow the exact naming convention provided in the endpoints below, taking into considiration exactly how it is written.
+
+
+          ## Error codes
+
+          Below is a list of some possible error codes, along with suggestions steps to take to try and alleviate them.
+
+          | **Error Code** | **Error Message** | **Next Steps** |
+          | --- | --- | --- |
+          | `Wathq_Notfound_Company_Managers_and_Owners;` | Can't get company managers and owners data. | Please contact the merchant to verify his commercial information |
+          | `Merchant_Blocked_Or_Suspended;` | Merchant is Blocked or Suspended | Please refer to a LDUN admin for the blocking or suspending reason, and how to fix it |
+          | `Supplier_Invalid` | Invalid supplier | Supplier does not exit in LDUN or has an issue with the account, please refer to LDUN admin for assistance. |
+          | `Order_Request_Invalid Personal information has an issue` | Order request validation messages | Merchant information such as email address, phone number, order number or order details is in a wrong format |
+          | `Wathq_Invalid;` | \- Sorry max wathq failed count reached.  <br>\- CR Expiry Date is too short, kindly request buyer to renew CR  <br>\- Invalid Commercial Number | These all pertains to the company data, check with the merchant that he has a valid commercial registration number and the validity of it is not about to expire soon. |
+          | `Order_Rules_Invalid;` | Order rules issue | TBC |
+          | `"Merchant_Invalid";` | Merchant Invalid | Signifies an internal error, allow some time and try again, if the issue still persists please contact a LDUN admin |
+
+
+paths:
+  /identity/connect/token:
+    post:
+      tags:
+        - Back-to-Back APIs
+      summary: Generate Token
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                scope:
+                  type: string
+                  example: api
+                grant_type:
+                  type: string
+                  example: client_credentials
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /integrationsapi/api/v1/orders/supplier:
+    post:
+      tags:
+        - Back-to-Back APIs
+      summary: Create Order
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                merchantCommercialNumber: 1000000000
+                merchantEmail: '{Merchant Email Address}'
+                merchantMobile: '05********'
+                thirdPartyIdentifierNumber: '12345'
+                products:
+                  - quantity: 10
+                    amountPerUnit: 1.0
+                    productName: '{name}'
+                  - quantity: 20
+                    amountPerUnit: 1.25
+                    productName: '{name}'
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
